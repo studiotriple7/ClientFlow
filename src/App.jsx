@@ -30,6 +30,7 @@ export default function ClientUpdateApp() {
   const [taskForm, setTaskForm] = useState({ title: '', description: '', images: [] });
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const [showNotifications, setShowNotifications] = useState(false);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
 
@@ -95,9 +96,25 @@ export default function ClientUpdateApp() {
     return () => clearInterval(interval);
   }, [tasks, currentUser]);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showNotifications && !event.target.closest('.notification-container')) {
+        setShowNotifications(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showNotifications]);
+
   const addNotification = (message) => {
     const newNotif = { id: Date.now(), message, time: new Date() };
     setNotifications(prev => [newNotif, ...prev].slice(0, 10));
+  };
+
+  const clearAllNotifications = () => {
+    setNotifications([]);
+    setShowNotifications(false);
   };
 
   const handleAuth = async () => {
@@ -347,11 +364,38 @@ export default function ClientUpdateApp() {
           </div>
           <div className="flex items-center gap-4">
             {notifications.length > 0 && (
-              <div className="relative">
-                <Bell className="text-indigo-600" size={24} />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  {notifications.length}
-                </span>
+              <div className="relative notification-container">
+                <button
+                  onClick={() => setShowNotifications(!showNotifications)}
+                  className="relative hover:bg-gray-100 p-2 rounded-lg transition"
+                >
+                  <Bell className="text-indigo-600" size={24} />
+                  <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {notifications.length}
+                  </span>
+                </button>
+                
+                {showNotifications && (
+                  <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
+                    <div className="p-4 border-b border-gray-200 flex justify-between items-center">
+                      <h3 className="font-semibold text-gray-900">Notifications</h3>
+                      <button
+                        onClick={clearAllNotifications}
+                        className="text-xs text-indigo-600 hover:text-indigo-700 font-medium"
+                      >
+                        Clear all
+                      </button>
+                    </div>
+                    <div className="max-h-96 overflow-y-auto">
+                      {notifications.map(notif => (
+                        <div key={notif.id} className="p-4 border-b border-gray-100 hover:bg-gray-50 transition">
+                          <p className="text-sm text-gray-900">{notif.message}</p>
+                          <p className="text-xs text-gray-500 mt-1">{getTimeSince(notif.time)}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
             <button
@@ -366,20 +410,6 @@ export default function ClientUpdateApp() {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {notifications.length > 0 && (
-          <div className="mb-6 space-y-2">
-            {notifications.slice(0, 3).map(notif => (
-              <div key={notif.id} className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start gap-3">
-                <Bell className="text-blue-600 mt-0.5 flex-shrink-0" size={20} />
-                <div className="flex-1">
-                  <p className="text-sm text-gray-900">{notif.message}</p>
-                  <p className="text-xs text-gray-500 mt-1">{getTimeSince(notif.time)}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
         {currentUser.type === 'client' && (
           <div>
             <div className="mb-6">
@@ -782,4 +812,3 @@ export default function ClientUpdateApp() {
     </div>
   );
 }
-
