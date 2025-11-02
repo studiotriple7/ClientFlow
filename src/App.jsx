@@ -16,7 +16,7 @@ import {
   query, 
   onSnapshot,
   orderBy,
-  serverTimestamp 
+  Timestamp
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
@@ -33,7 +33,6 @@ export default function ClientUpdateApp() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
 
-  // Listen for auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -54,7 +53,6 @@ export default function ClientUpdateApp() {
     return () => unsubscribe();
   }, []);
 
-  // Listen for tasks from Firestore
   useEffect(() => {
     if (!currentUser) return;
 
@@ -70,7 +68,6 @@ export default function ClientUpdateApp() {
     return () => unsubscribe();
   }, [currentUser]);
 
-  // Check for reminders
   useEffect(() => {
     if (!currentUser || currentUser.type !== 'admin') return;
 
@@ -86,7 +83,7 @@ export default function ClientUpdateApp() {
           if (timeSinceLastReminder >= fourHours) {
             addNotification(`Reminder: "${task.title}" from ${task.clientName} needs attention`);
             const taskRef = doc(db, 'tasks', task.id);
-            await updateDoc(taskRef, { lastReminder: serverTimestamp() });
+            await updateDoc(taskRef, { lastReminder: Timestamp.now() });
           }
         }
       });
@@ -110,11 +107,7 @@ export default function ClientUpdateApp() {
           alert('Please fill in all fields');
           return;
         }
-        const userCredential = await createUserWithEmailAndPassword(
-          auth, 
-          formData.email, 
-          formData.password
-        );
+        await createUserWithEmailAndPassword(auth, formData.email, formData.password);
         addNotification(`Welcome ${formData.name}! Your account has been created.`);
       } else {
         await signInWithEmailAndPassword(auth, formData.email, formData.password);
@@ -177,7 +170,6 @@ export default function ClientUpdateApp() {
     try {
       const imageUrls = [];
       
-      // Upload images to Firebase Storage
       for (const img of taskForm.images) {
         if (img.file) {
           const storageRef = ref(storage, `task-images/${Date.now()}-${img.file.name}`);
@@ -187,7 +179,6 @@ export default function ClientUpdateApp() {
         }
       }
 
-      // Add task to Firestore
       await addDoc(collection(db, 'tasks'), {
         clientId: currentUser.id,
         clientName: currentUser.name,
@@ -195,8 +186,8 @@ export default function ClientUpdateApp() {
         description: taskForm.description,
         images: imageUrls,
         status: 'pending',
-        createdAt: serverTimestamp(),
-        lastReminder: serverTimestamp()
+        createdAt: Timestamp.now(),
+        lastReminder: Timestamp.now()
       });
 
       setTaskForm({ title: '', description: '', images: [] });
@@ -213,7 +204,7 @@ export default function ClientUpdateApp() {
       const taskRef = doc(db, 'tasks', taskId);
       await updateDoc(taskRef, { 
         status: 'pending_review', 
-        submittedForReview: serverTimestamp() 
+        submittedForReview: Timestamp.now()
       });
       const task = tasks.find(t => t.id === taskId);
       addNotification(`Task "${task.title}" submitted for ${task.clientName}'s review`);
@@ -227,7 +218,7 @@ export default function ClientUpdateApp() {
       const taskRef = doc(db, 'tasks', taskId);
       await updateDoc(taskRef, { 
         status: 'completed', 
-        completedAt: serverTimestamp() 
+        completedAt: Timestamp.now()
       });
       const task = tasks.find(t => t.id === taskId);
       addNotification(`Task "${task.title}" approved and completed!`);
@@ -241,7 +232,7 @@ export default function ClientUpdateApp() {
       const taskRef = doc(db, 'tasks', taskId);
       await updateDoc(taskRef, { 
         status: 'pending', 
-        lastReminder: serverTimestamp() 
+        lastReminder: Timestamp.now()
       });
       const task = tasks.find(t => t.id === taskId);
       addNotification(`Changes requested for "${task.title}" - back to in progress`);
