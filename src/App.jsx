@@ -40,7 +40,7 @@ export default function ClientUpdateApp() {
           id: user.uid,
           email: user.email,
           name: user.displayName || user.email.split('@')[0],
-          type: user.email === 'admin@yourbusiness.com' ? 'admin' : 'client'
+          type: user.email === 'anthony@studiotriple7.com' ? 'admin' : 'client'
         });
         setShowLogin(false);
       } else {
@@ -782,3 +782,4 @@ export default function ClientUpdateApp() {
     </div>
   );
 }
+
