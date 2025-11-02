@@ -1,19 +1,76 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, CheckCircle, Clock, User, Plus, LogOut, X, AlertCircle } from 'lucide-react';
+import { Bell, CheckCircle, Clock, User, Plus, LogOut, X, AlertCircle, Loader } from 'lucide-react';
+import { auth, db, storage } from './firebase';
+import { 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  signOut,
+  onAuthStateChanged 
+} from 'firebase/auth';
+import { 
+  collection, 
+  addDoc, 
+  updateDoc, 
+  deleteDoc, 
+  doc, 
+  query, 
+  onSnapshot,
+  orderBy,
+  serverTimestamp 
+} from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 export default function ClientUpdateApp() {
   const [currentUser, setCurrentUser] = useState(null);
   const [showLogin, setShowLogin] = useState(true);
   const [isSignup, setIsSignup] = useState(false);
-  const [users, setUsers] = useState([
-    { id: 1, email: 'admin@yourbusiness.com', password: 'admin123', name: 'Admin', type: 'admin' }
-  ]);
+  const [users, setUsers] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [formData, setFormData] = useState({ email: '', password: '', name: '' });
   const [taskForm, setTaskForm] = useState({ title: '', description: '', images: [] });
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
 
+  // Listen for auth state changes
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setCurrentUser({
+          id: user.uid,
+          email: user.email,
+          name: user.displayName || user.email.split('@')[0],
+          type: user.email === 'admin@yourbusiness.com' ? 'admin' : 'client'
+        });
+        setShowLogin(false);
+      } else {
+        setCurrentUser(null);
+        setShowLogin(true);
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Listen for tasks from Firestore
+  useEffect(() => {
+    if (!currentUser) return;
+
+    const q = query(collection(db, 'tasks'), orderBy('createdAt', 'desc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const tasksData = [];
+      snapshot.forEach((doc) => {
+        tasksData.push({ id: doc.id, ...doc.data() });
+      });
+      setTasks(tasksData);
+    });
+
+    return () => unsubscribe();
+  }, [currentUser]);
+
+  // Check for reminders
   useEffect(() => {
     if (!currentUser || currentUser.type !== 'admin') return;
 
@@ -21,17 +78,17 @@ export default function ClientUpdateApp() {
       const now = new Date();
       const fourHours = 4 * 60 * 60 * 1000;
 
-      setTasks(prevTasks => {
-        return prevTasks.map(task => {
-          if (task.status === 'pending') {
-            const timeSinceLastReminder = now - new Date(task.lastReminder);
-            if (timeSinceLastReminder >= fourHours) {
-              addNotification(`Reminder: "${task.title}" from ${task.clientName} needs attention`);
-              return { ...task, lastReminder: now };
-            }
+      tasks.forEach(async (task) => {
+        if (task.status === 'pending') {
+          const lastReminder = task.lastReminder?.toDate ? task.lastReminder.toDate() : new Date(task.lastReminder);
+          const timeSinceLastReminder = now - lastReminder;
+          
+          if (timeSinceLastReminder >= fourHours) {
+            addNotification(`Reminder: "${task.title}" from ${task.clientName} needs attention`);
+            const taskRef = doc(db, 'tasks', task.id);
+            await updateDoc(taskRef, { lastReminder: serverTimestamp() });
           }
-          return task;
-        });
+        }
       });
     };
 
@@ -39,48 +96,44 @@ export default function ClientUpdateApp() {
     checkReminders();
 
     return () => clearInterval(interval);
-  }, [currentUser]);
+  }, [tasks, currentUser]);
 
   const addNotification = (message) => {
     const newNotif = { id: Date.now(), message, time: new Date() };
     setNotifications(prev => [newNotif, ...prev].slice(0, 10));
   };
 
-  const handleAuth = () => {
-    if (isSignup) {
-      if (!formData.name || !formData.email || !formData.password) {
-        alert('Please fill in all fields');
-        return;
-      }
-      const newUser = {
-        id: users.length + 1,
-        email: formData.email,
-        password: formData.password,
-        name: formData.name,
-        type: 'client'
-      };
-      setUsers([...users, newUser]);
-      setCurrentUser(newUser);
-      setShowLogin(false);
-      addNotification(`Welcome ${newUser.name}! Your account has been created.`);
-    } else {
-      const user = users.find(u => u.email === formData.email && u.password === formData.password);
-      if (user) {
-        setCurrentUser(user);
-        setShowLogin(false);
-        addNotification(`Welcome back, ${user.name}!`);
+  const handleAuth = async () => {
+    try {
+      if (isSignup) {
+        if (!formData.name || !formData.email || !formData.password) {
+          alert('Please fill in all fields');
+          return;
+        }
+        const userCredential = await createUserWithEmailAndPassword(
+          auth, 
+          formData.email, 
+          formData.password
+        );
+        addNotification(`Welcome ${formData.name}! Your account has been created.`);
       } else {
-        alert('Invalid credentials');
+        await signInWithEmailAndPassword(auth, formData.email, formData.password);
+        addNotification(`Welcome back!`);
       }
+      setFormData({ email: '', password: '', name: '' });
+    } catch (error) {
+      alert(error.message);
     }
-    setFormData({ email: '', password: '', name: '' });
   };
 
-  const handleLogout = () => {
-    setCurrentUser(null);
-    setShowLogin(true);
-    setShowTaskForm(false);
-    setTaskForm({ title: '', description: '', images: [] });
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      setShowTaskForm(false);
+      setTaskForm({ title: '', description: '', images: [] });
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   const handleImageUpload = (e) => {
@@ -100,7 +153,7 @@ export default function ClientUpdateApp() {
       reader.onload = (event) => {
         setTaskForm(prev => ({
           ...prev,
-          images: [...prev.images, { url: event.target.result, name: file.name }]
+          images: [...prev.images, { file, url: event.target.result, name: file.name }]
         }));
       };
       reader.readAsDataURL(file);
@@ -114,59 +167,102 @@ export default function ClientUpdateApp() {
     }));
   };
 
-  const submitTask = () => {
+  const submitTask = async () => {
     if (!taskForm.title || !taskForm.description) {
       alert('Please fill in title and description');
       return;
     }
-    const newTask = {
-      id: Date.now(),
-      clientId: currentUser.id,
-      clientName: currentUser.name,
-      title: taskForm.title,
-      description: taskForm.description,
-      images: taskForm.images,
-      status: 'pending',
-      createdAt: new Date(),
-      lastReminder: new Date()
-    };
-    setTasks([...tasks, newTask]);
-    setTaskForm({ title: '', description: '', images: [] });
-    setShowTaskForm(false);
-    addNotification(`New update request submitted: "${newTask.title}"`);
+
+    setUploading(true);
+    try {
+      const imageUrls = [];
+      
+      // Upload images to Firebase Storage
+      for (const img of taskForm.images) {
+        if (img.file) {
+          const storageRef = ref(storage, `task-images/${Date.now()}-${img.file.name}`);
+          await uploadBytes(storageRef, img.file);
+          const url = await getDownloadURL(storageRef);
+          imageUrls.push({ url, name: img.name });
+        }
+      }
+
+      // Add task to Firestore
+      await addDoc(collection(db, 'tasks'), {
+        clientId: currentUser.id,
+        clientName: currentUser.name,
+        title: taskForm.title,
+        description: taskForm.description,
+        images: imageUrls,
+        status: 'pending',
+        createdAt: serverTimestamp(),
+        lastReminder: serverTimestamp()
+      });
+
+      setTaskForm({ title: '', description: '', images: [] });
+      setShowTaskForm(false);
+      addNotification(`New update request submitted: "${taskForm.title}"`);
+    } catch (error) {
+      alert('Error submitting task: ' + error.message);
+    }
+    setUploading(false);
   };
 
-  const submitForReview = (taskId) => {
-    setTasks(tasks.map(t => 
-      t.id === taskId ? { ...t, status: 'pending_review', submittedForReview: new Date() } : t
-    ));
-    const task = tasks.find(t => t.id === taskId);
-    addNotification(`Task "${task.title}" submitted for ${task.clientName}'s review`);
+  const submitForReview = async (taskId) => {
+    try {
+      const taskRef = doc(db, 'tasks', taskId);
+      await updateDoc(taskRef, { 
+        status: 'pending_review', 
+        submittedForReview: serverTimestamp() 
+      });
+      const task = tasks.find(t => t.id === taskId);
+      addNotification(`Task "${task.title}" submitted for ${task.clientName}'s review`);
+    } catch (error) {
+      alert('Error: ' + error.message);
+    }
   };
 
-  const approveTask = (taskId) => {
-    setTasks(tasks.map(t => 
-      t.id === taskId ? { ...t, status: 'completed', completedAt: new Date() } : t
-    ));
-    const task = tasks.find(t => t.id === taskId);
-    addNotification(`Task "${task.title}" approved and completed!`);
+  const approveTask = async (taskId) => {
+    try {
+      const taskRef = doc(db, 'tasks', taskId);
+      await updateDoc(taskRef, { 
+        status: 'completed', 
+        completedAt: serverTimestamp() 
+      });
+      const task = tasks.find(t => t.id === taskId);
+      addNotification(`Task "${task.title}" approved and completed!`);
+    } catch (error) {
+      alert('Error: ' + error.message);
+    }
   };
 
-  const requestChanges = (taskId) => {
-    setTasks(tasks.map(t => 
-      t.id === taskId ? { ...t, status: 'pending', lastReminder: new Date() } : t
-    ));
-    const task = tasks.find(t => t.id === taskId);
-    addNotification(`Changes requested for "${task.title}" - back to in progress`);
+  const requestChanges = async (taskId) => {
+    try {
+      const taskRef = doc(db, 'tasks', taskId);
+      await updateDoc(taskRef, { 
+        status: 'pending', 
+        lastReminder: serverTimestamp() 
+      });
+      const task = tasks.find(t => t.id === taskId);
+      addNotification(`Changes requested for "${task.title}" - back to in progress`);
+    } catch (error) {
+      alert('Error: ' + error.message);
+    }
   };
 
-  const deleteTask = (taskId) => {
-    setTasks(tasks.filter(t => t.id !== taskId));
-    addNotification('Task deleted');
+  const deleteTask = async (taskId) => {
+    try {
+      await deleteDoc(doc(db, 'tasks', taskId));
+      addNotification('Task deleted');
+    } catch (error) {
+      alert('Error: ' + error.message);
+    }
   };
 
   const getTimeSince = (date) => {
-    const minutes = Math.floor((new Date() - new Date(date)) / 60000);
+    if (!date) return 'just now';
+    const timestamp = date.toDate ? date.toDate() : new Date(date);
+    const minutes = Math.floor((new Date() - timestamp) / 60000);
     if (minutes < 60) return `${minutes}m ago`;
     const hours = Math.floor(minutes / 60);
     if (hours < 24) return `${hours}h ago`;
@@ -177,6 +273,14 @@ export default function ClientUpdateApp() {
   const pendingTasks = tasks.filter(t => t.status === 'pending');
   const reviewTasks = tasks.filter(t => t.status === 'pending_review');
   const completedTasks = tasks.filter(t => t.status === 'completed');
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <Loader className="animate-spin text-indigo-600" size={48} />
+      </div>
+    );
+  }
 
   if (showLogin) {
     return (
@@ -291,9 +395,10 @@ export default function ClientUpdateApp() {
               <button
                 onClick={() => setShowTaskForm(!showTaskForm)}
                 className="flex items-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition"
+                disabled={uploading}
               >
-                <Plus size={20} />
-                New Update Request
+                {uploading ? <Loader className="animate-spin" size={20} /> : <Plus size={20} />}
+                {uploading ? 'Uploading...' : 'New Update Request'}
               </button>
             </div>
 
@@ -352,9 +457,10 @@ export default function ClientUpdateApp() {
                   <div className="flex gap-3">
                     <button
                       onClick={submitTask}
-                      className="bg-indigo-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-indigo-700 transition"
+                      disabled={uploading}
+                      className="bg-indigo-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-indigo-700 transition disabled:opacity-50"
                     >
-                      Submit Request
+                      {uploading ? 'Submitting...' : 'Submit Request'}
                     </button>
                     <button
                       onClick={() => {
@@ -512,7 +618,7 @@ export default function ClientUpdateApp() {
                   </div>
                   <h3 className="font-semibold text-gray-700">Total Clients</h3>
                 </div>
-                <p className="text-3xl font-bold text-gray-900">{users.filter(u => u.type === 'client').length}</p>
+                <p className="text-3xl font-bold text-gray-900">{users.length}</p>
               </div>
             </div>
 
