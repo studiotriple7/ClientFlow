@@ -307,7 +307,7 @@ useEffect(() => {
             <div className="bg-indigo-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
               <User className="text-white" size={32} />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">CFlow by Studio Triple 7</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">CFlow <br>by Studio Triple 7</br></h1>
             <p className="text-gray-600">Manage website updates efficiently</p>
           </div>
 
@@ -816,6 +816,7 @@ useEffect(() => {
     </div>
   );
 }
+
 
 
 
