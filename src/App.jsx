@@ -351,11 +351,6 @@ useEffect(() => {
               {isSignup ? 'Already have an account? Login' : 'Need an account? Sign Up'}
             </button>
           </div>
-
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg text-sm text-gray-600">
-            <p className="font-semibold mb-2">Demo Credentials:</p>
-            <p>Admin: admin@yourbusiness.com / admin123</p>
-          </div>
         </div>
       </div>
     );
@@ -821,4 +816,5 @@ useEffect(() => {
     </div>
   );
 }
+
 
