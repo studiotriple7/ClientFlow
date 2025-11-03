@@ -21,6 +21,15 @@ import {
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 export default function ClientUpdateApp() {
+useEffect(() => {
+    // Register service worker for PWA
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(reg => console.log('✅ Service Worker registered'))
+        .catch(err => console.log('❌ Service Worker failed:', err));
+    }
+  }, []);
+  
   const [currentUser, setCurrentUser] = useState(null);
   const [showLogin, setShowLogin] = useState(true);
   const [isSignup, setIsSignup] = useState(false);
@@ -812,3 +821,4 @@ export default function ClientUpdateApp() {
     </div>
   );
 }
+
