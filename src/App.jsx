@@ -527,9 +527,12 @@ await addDoc(collection(db, 'users'), {
         className="h-10 object-contain"
       />
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">ClientFlow</h1>
-        <p className="text-sm text-gray-600">by Studio Triple 7</p>
-      </div>
+  <p className="text-sm text-indigo-600 font-semibold">
+    Hi {currentUser.name?.split(' ')[0]}! 👋
+  </p>
+  <h1 className="text-2xl font-bold text-gray-900">CFlow</h1>
+  <p className="text-sm text-gray-600">by Studio Triple 7</p>
+</div>
     </div>
     <div className="flex items-center gap-4">
       <button
@@ -1187,6 +1190,7 @@ await addDoc(collection(db, 'users'), {
     </div>
   );
 }
+
 
 
 
