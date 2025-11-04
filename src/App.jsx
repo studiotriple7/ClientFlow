@@ -419,7 +419,7 @@ export default function ClientUpdateApp() {
         <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
           <div className="text-center mb-8">
            <img src="/logo.png" alt="CFlow Logo" className="w-48 object-contain mx-auto mb-4" />
-            <p className="text-gray-600">A Client Management System by ST7</p>
+            <p className="text-gray-600">Manage Client Updates Efficiently</p>
           </div>
 
           <div className="space-y-4">
@@ -1107,6 +1107,7 @@ export default function ClientUpdateApp() {
     </div>
   );
 }
+
 
 
 
