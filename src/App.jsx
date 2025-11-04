@@ -165,7 +165,7 @@ export default function ClientUpdateApp() {
   setUsers(Array.from(uniqueClients).map(id => ({ id })));
 }, [tasks, currentUser]);
 
-  const handleAuth = async () => {
+ const handleAuth = async () => {
   try {
     if (isSignup) {
       if (!formData.name || !formData.email || !formData.password) {
@@ -1165,6 +1165,7 @@ export default function ClientUpdateApp() {
     </div>
   );
 }
+
 
 
 
