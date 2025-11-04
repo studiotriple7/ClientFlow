@@ -197,6 +197,12 @@ await addDoc(collection(db, 'users'), {
   type: 'client',
   createdAt: Timestamp.now()
 });
+
+      useEffect(() => {
+  if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
+}, []);
       
       addNotification(`Welcome ${formData.name}! Your account has been created.`);
     } else {
@@ -1176,6 +1182,7 @@ await addDoc(collection(db, 'users'), {
     </div>
   );
 }
+
 
 
 
