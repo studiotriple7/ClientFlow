@@ -148,10 +148,15 @@ export default function ClientUpdateApp() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showNotifications]);
 
-  const addNotification = (message) => {
-    const newNotif = { id: Date.now(), message, time: new Date() };
-    setNotifications(prev => [newNotif, ...prev].slice(0, 10));
+ const addNotification = (message, userId = null) => {
+  const newNotif = { 
+    id: Date.now(), 
+    message, 
+    time: new Date(),
+    userId: userId || currentUser?.id 
   };
+  setNotifications(prev => [newNotif, ...prev].slice(0, 10));
+};
 
   const clearAllNotifications = () => {
     setNotifications([]);
@@ -1182,6 +1187,7 @@ await addDoc(collection(db, 'users'), {
     </div>
   );
 }
+
 
 
 
