@@ -533,12 +533,9 @@ await addDoc(collection(db, 'users'), {
     </div>
   <div className="flex items-center gap-4">
   <div className="flex items-center gap-3">
-    <div>
-      <p className="text-sm font-semibold text-gray-900">
-        👋 Hi {currentUser.name?.split(' ')[0]}!
-      </p>
-      <p className="text-xs text-gray-500">{currentUser.type === 'admin' ? 'Admin' : 'Client'}</p>
-    </div>
+    <p className="text-sm font-semibold text-gray-900">
+      👋 Hi {currentUser.name?.split(' ')[0]}! ({currentUser.type === 'admin' ? 'Admin' : 'Client'})
+    </p>
     <button
       onClick={() => setShowProfileEdit(!showProfileEdit)}
       className="relative"
@@ -1195,6 +1192,7 @@ await addDoc(collection(db, 'users'), {
     </div>
   );
 }
+
 
 
 
