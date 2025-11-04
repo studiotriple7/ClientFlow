@@ -179,13 +179,14 @@ export default function ClientUpdateApp() {
       const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
       
       // Add user to Firestore
-      await addDoc(collection(db, 'users'), {
-        uid: userCredential.user.uid,
-        email: formData.email,
-        name: formData.name,
-        type: 'client',
-        createdAt: Timestamp.now()
-      });
+     await addDoc(collection(db, 'users'), {
+  uid: userCredential.user.uid,
+  email: formData.email,
+  name: formData.name,
+  companyName: formData.companyName || '',
+  type: 'client',
+  createdAt: Timestamp.now()
+});
       
       addNotification(`Welcome ${formData.name}! Your account has been created.`);
     } else {
@@ -1169,6 +1170,7 @@ export default function ClientUpdateApp() {
     </div>
   );
 }
+
 
 
 
