@@ -419,7 +419,7 @@ export default function ClientUpdateApp() {
         <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
           <div className="text-center mb-8">
             <img 
-              src="https://i.ibb.co/9NJjmXs/logo.png" 
+              src="/logo.png" 
               alt="ClientFlow Logo" 
               className="h-24 mx-auto mb-4"
             />
@@ -1111,4 +1111,5 @@ export default function ClientUpdateApp() {
     </div>
   );
 }
+
 
