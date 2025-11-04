@@ -482,15 +482,11 @@ export default function ClientUpdateApp() {
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-4">
            <div className="flex items-center gap-3">
-  <img src="/logo.png" alt="CFlow Logo" className="w-12 h-12 object-contain" />
-             <div className="flex items-center gap-3">
- <div className="flex items-center gap-3">
-  <img src="/logo.png" alt="CFlow Logo" className="w-12 h-12 object-contain" />
-  <div>
-    <h1 className="text-2xl font-bold text-gray-900">CFlow</h1>
-    <p className="text-sm text-gray-600">by Studio Triple 7</p>
-  </div>
-</div>
+  <img 
+              src="https://i.ibb.co/9NJjmXs/CLIENTFLOW.png" 
+              alt="ClientFlow" 
+              className="h-10"
+            />
             <div>
               <h1 className="text-2xl font-bold text-gray-900">ClientFlow</h1>
               <p className="text-sm text-gray-600">
@@ -1112,6 +1108,7 @@ export default function ClientUpdateApp() {
     </div>
   );
 }
+
 
 
 
