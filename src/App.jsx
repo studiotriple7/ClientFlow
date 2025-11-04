@@ -478,41 +478,36 @@ export default function ClientUpdateApp() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-4">
-           <div className="flex items-center gap-3">
-  <img 
-              src="https://i.ibb.co/9NJjmXs/CLIENTFLOW.png" 
-              alt="ClientFlow" 
-              className="h-10"
-            />
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">ClientFlow</h1>
-              <p className="text-sm text-gray-600">
-                {currentUser.type === 'admin' ? 'Admin Dashboard' : `${currentUser.name}${currentUser.companyName ? ` - ${currentUser.companyName}` : ''}`}
-              </p>
-            </div>
+     <header className="bg-white shadow-sm border-b">
+  <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+    <div className="flex items-center gap-3">
+      <img 
+        src="/logo.png" 
+        alt="CFlow Logo" 
+        className="h-10 object-contain"
+      />
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">CFlow</h1>
+        <p className="text-sm text-gray-600">by Studio Triple 7</p>
+      </div>
+    </div>
+    <div className="flex items-center gap-4">
+      <button
+        onClick={() => setShowProfileEdit(!showProfileEdit)}
+        className="relative"
+      >
+        {currentUser.photoURL ? (
+          <img 
+            src={currentUser.photoURL} 
+            alt="Profile" 
+            className="w-10 h-10 rounded-full object-cover border-2 border-indigo-600"
+          />
+        ) : (
+          <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center">
+            <User className="text-white" size={20} />
           </div>
-          </div>
-        </div>
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => setShowProfileEdit(!showProfileEdit)}
-              className="relative"
-            >
-              {currentUser.photoURL ? (
-                <img 
-                  src={currentUser.photoURL} 
-                  alt="Profile" 
-                  className="w-10 h-10 rounded-full object-cover border-2 border-indigo-600"
-                />
-              ) : (
-                <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center">
-                  <User className="text-white" size={20} />
-                </div>
-              )}
-            </button>
+        )}
+      </button>
 
             {showProfileEdit && (
               <div className="absolute right-4 top-16 bg-white rounded-lg shadow-xl border border-gray-200 p-4 z-50 w-64">
