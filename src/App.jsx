@@ -154,6 +154,17 @@ export default function ClientUpdateApp() {
     setShowNotifications(false);
   };
 
+  useEffect(() => {
+  if (!currentUser || currentUser.type !== 'admin') return;
+
+  // Count unique clients from tasks
+  const uniqueClients = new Set();
+  tasks.forEach(task => {
+    uniqueClients.add(task.clientId);
+  });
+  setUsers(Array.from(uniqueClients).map(id => ({ id })));
+}, [tasks, currentUser]);
+
   const handleAuth = async () => {
     try {
       if (isSignup) {
@@ -1132,6 +1143,7 @@ export default function ClientUpdateApp() {
     </div>
   );
 }
+
 
 
 
