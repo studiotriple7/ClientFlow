@@ -494,6 +494,8 @@ export default function ClientUpdateApp() {
               </p>
             </div>
           </div>
+          </div>
+        </div>
           <div className="flex items-center gap-4">
             <button
               onClick={() => setShowProfileEdit(!showProfileEdit)}
@@ -1108,6 +1110,7 @@ export default function ClientUpdateApp() {
     </div>
   );
 }
+
 
 
 
