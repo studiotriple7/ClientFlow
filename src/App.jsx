@@ -487,7 +487,7 @@ export default function ClientUpdateApp() {
         className="h-10 object-contain"
       />
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">CFlow</h1>
+        <h1 className="text-2xl font-bold text-gray-900">CLientFlow</h1>
         <p className="text-sm text-gray-600">by Studio Triple 7</p>
       </div>
     </div>
@@ -1105,6 +1105,7 @@ export default function ClientUpdateApp() {
     </div>
   );
 }
+
 
 
 
