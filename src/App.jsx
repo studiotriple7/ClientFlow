@@ -815,10 +815,14 @@ export default function ClientUpdateApp() {
                       <div className="flex justify-between items-start mb-3">
                         <h3 className="text-lg font-bold text-gray-900">{task.title}</h3>
                         <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                          task.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'
-                        }`}>
-                          {task.status === 'pending' ? 'In Progress' : 'Completed'}
-                        </span>
+  task.status === 'completed' ? 'bg-green-100 text-green-800' : 
+  task.acknowledged ? 'bg-blue-100 text-blue-800' : 
+  'bg-yellow-100 text-yellow-800'
+}`}>
+  {task.status === 'completed' ? 'Completed' : 
+   task.acknowledged ? '✓ Acknowledged' : 
+   'In Progress'}
+</span>
                       </div>
                       <p className="text-gray-600 mb-3">{task.description}</p>
                       
@@ -1128,6 +1132,7 @@ export default function ClientUpdateApp() {
     </div>
   );
 }
+
 
 
 
