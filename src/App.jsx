@@ -607,12 +607,19 @@ await addDoc(collection(db, 'users'), {
                       </button>
                     </div>
                     <div className="max-h-96 overflow-y-auto">
-                      {notifications.map(notif => (
-                        <div key={notif.id} className="p-4 border-b border-gray-100 hover:bg-gray-50 transition">
-                          <p className="text-sm text-gray-900">{notif.message}</p>
-                          <p className="text-xs text-gray-500 mt-1">{getTimeSince(notif.time)}</p>
-                        </div>
-                      ))}
+                      {notifications
+  .filter(notif => {
+    // Admins see all notifications
+    if (currentUser.type === 'admin') return true;
+    // Clients only see notifications about their own tasks
+    return notif.userId === currentUser.id;
+  })
+  .map(notif => (
+    <div key={notif.id} className="p-4 border-b border-gray-200 hover:bg-gray-50 transition">
+      <p className="text-sm text-gray-900">{notif.message}</p>
+      <p className="text-xs text-gray-500 mt-1">{getTimeSince(notif.time)}</p>
+    </div>
+  ))}
                     </div>
                   </div>
                 )}
@@ -1175,6 +1182,7 @@ await addDoc(collection(db, 'users'), {
     </div>
   );
 }
+
 
 
 
