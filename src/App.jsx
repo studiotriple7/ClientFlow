@@ -148,7 +148,7 @@ export default function ClientUpdateApp() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showNotifications]);
 
- const addNotification = (message, userId = null) => {
+const addNotification = (message, userId = null) => {
   const newNotif = { 
     id: Date.now(), 
     message, 
@@ -156,6 +156,14 @@ export default function ClientUpdateApp() {
     userId: userId || currentUser?.id 
   };
   setNotifications(prev => [newNotif, ...prev].slice(0, 10));
+
+  // Send browser notification
+  if ('Notification' in window && Notification.permission === 'granted') {
+    new Notification('CFlow', {
+      body: message,
+      icon: '/logo.png'
+    });
+  }
 };
 
   const clearAllNotifications = () => {
@@ -1182,6 +1190,7 @@ await addDoc(collection(db, 'users'), {
     </div>
   );
 }
+
 
 
 
