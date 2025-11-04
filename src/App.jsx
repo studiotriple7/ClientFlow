@@ -534,23 +534,31 @@ await addDoc(collection(db, 'users'), {
   <p className="text-sm text-gray-600">by Studio Triple 7</p>
 </div>
     </div>
-    <div className="flex items-center gap-4">
-      <button
-        onClick={() => setShowProfileEdit(!showProfileEdit)}
-        className="relative"
-      >
-        {currentUser.photoURL ? (
-          <img 
-            src={currentUser.photoURL} 
-            alt="Profile" 
-            className="w-10 h-10 rounded-full object-cover border-2 border-indigo-600"
-          />
-        ) : (
-          <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center">
-            <User className="text-white" size={20} />
-          </div>
-        )}
-      </button>
+   <div className="flex items-center gap-4">
+  <div className="flex items-center gap-3">
+    <div>
+      <p className="text-sm font-semibold text-gray-900">
+        Hi {currentUser.name?.split(' ')[0]}! 👋
+      </p>
+      <p className="text-xs text-gray-500">{currentUser.type === 'admin' ? 'Admin' : 'Client'}</p>
+    </div>
+    <button
+      onClick={() => setShowProfileEdit(!showProfileEdit)}
+      className="relative"
+    >
+      {currentUser.photoURL ? (
+        <img 
+          src={currentUser.photoURL} 
+          alt="Profile" 
+          className="w-10 h-10 rounded-full object-cover border-2 border-indigo-600"
+        />
+      ) : (
+        <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center">
+          <User className="text-white" size={20} />
+        </div>
+      )}
+    </button>
+  </div>
 
             {showProfileEdit && (
               <div className="absolute right-4 top-16 bg-white rounded-lg shadow-xl border border-gray-200 p-4 z-50 w-64">
@@ -1190,6 +1198,7 @@ await addDoc(collection(db, 'users'), {
     </div>
   );
 }
+
 
 
 
