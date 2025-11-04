@@ -96,17 +96,20 @@ export default function ClientUpdateApp() {
     return () => unsubscribe();
   }, [currentUser]);
 
-  useEffect(() => {
-    if (!currentUser || currentUser.type !== 'admin') return;
-
-    const q = query(collection(db, 'users'), where('type', '==', 'client'));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      setClientCount(snapshot.size);
+ useEffect(() => {
+  if (!currentUser || currentUser.type !== 'admin') return;
+  const q = query(collection(db, 'users'), where('type', '==', 'client'));
+  const unsubscribe = onSnapshot(q, (snapshot) => {
+    const usersData = [];
+    snapshot.forEach((doc) => {
+      usersData.push({ id: doc.id, ...doc.data() });
     });
-
-    return () => unsubscribe();
-  }, [currentUser]);
-
+    setUsers(usersData);
+    setClientCount(snapshot.size);
+  });
+  return () => unsubscribe();
+}, [currentUser]);
+  
   useEffect(() => {
     if (!currentUser || currentUser.type !== 'admin') return;
 
@@ -1166,6 +1169,7 @@ export default function ClientUpdateApp() {
     </div>
   );
 }
+
 
 
 
