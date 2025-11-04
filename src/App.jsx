@@ -193,17 +193,6 @@ export default function ClientUpdateApp() {
     alert(error.message);
   }
 };
-      
-      addNotification(`Welcome ${formData.name}! Your account has been created.`);
-    } else {
-      await signInWithEmailAndPassword(auth, formData.email, formData.password);
-      addNotification(`Welcome back!`);
-    }
-    setFormData({ email: '', password: '', name: '' });
-  } catch (error) {
-    alert(error.message);
-  }
-};
 
   const handleLogout = async () => {
     try {
@@ -1154,6 +1143,7 @@ export default function ClientUpdateApp() {
     </div>
   );
 }
+
 
 
 
