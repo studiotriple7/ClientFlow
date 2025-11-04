@@ -517,42 +517,58 @@ await addDoc(collection(db, 'users'), {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-     <header className="bg-white shadow-sm border-b">
-  <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-    <div className="flex items-center gap-3">
-      <img 
-        src="/logo.png" 
-        alt="CFlow Logo" 
-        className="h-10 object-contain"
-      />
-      <div>
-  <h1 className="text-2xl font-bold text-gray-900">CFlow</h1>
-  <p className="text-sm text-gray-600">by Studio Triple 7</p>
-</div>
-    </div>
- <div className="flex items-center gap-2 md:gap-4">
-  <div className="flex items-center gap-2 md:gap-3">
-    <p className="text-xs md:text-sm font-semibold text-gray-900 truncate">
-      👋 Hi {currentUser.name?.split(' ')[0]}! ({currentUser.type === 'admin' ? 'Admin' : 'Client'})
-    </p>
-    <button
-      onClick={() => setShowProfileEdit(!showProfileEdit)}
-      className="relative"
-    >
-      {currentUser.photoURL ? (
+   <header className="bg-white shadow-sm border-b">
+  <div className="max-w-7xl mx-auto px-4 py-4">
+    {/* Top row */}
+    <div className="flex justify-between items-center mb-3">
+      <div className="flex items-center gap-3">
         <img 
-          src={currentUser.photoURL} 
-          alt="Profile" 
-          className="w-10 h-10 rounded-full object-cover border-2 border-indigo-600"
+          src="/logo.png" 
+          alt="CFlow Logo" 
+          className="h-10 object-contain"
         />
-      ) : (
-        <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center">
-          <User className="text-white" size={20} />
+        <div className="hidden md:block">
+          <h1 className="text-2xl font-bold text-gray-900">CFlow</h1>
+          <p className="text-sm text-gray-600">by Studio Triple 7</p>
         </div>
-      )}
-    </button>
-  </div>
+      </div>
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => window.location.reload()}
+          className="text-gray-600 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100 transition"
+          title="Refresh"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    
+    {/* Bottom row */}
+    <div className="flex justify-between items-center">
+      <div className="flex items-center gap-2">
+        <p className="text-sm font-semibold text-gray-900">
+          👋 Hi {currentUser.name?.split(' ')[0]}! ({currentUser.type === 'admin' ? 'Admin' : 'Client'})
+        </p>
+        <button
+          onClick={() => setShowProfileEdit(!showProfileEdit)}
+          className="relative"
+        >
+          {currentUser.photoURL ? (
+            <img 
+              src={currentUser.photoURL} 
+              alt="Profile" 
+              className="w-8 h-8 rounded-full object-cover border-2 border-indigo-600"
+            />
+          ) : (
+            <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center">
+              <User className="text-white" size={16} />
+            </div>
+          )}
+        </button>
+      </div>
+    </div>
 
             {showProfileEdit && (
               <div className="absolute right-4 top-16 bg-white rounded-lg shadow-xl border border-gray-200 p-4 z-50 w-64">
@@ -1192,6 +1208,7 @@ await addDoc(collection(db, 'users'), {
     </div>
   );
 }
+
 
 
 
