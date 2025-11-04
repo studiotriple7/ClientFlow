@@ -980,10 +980,10 @@ await addDoc(collection(db, 'users'), {
                   <p className="text-gray-500 text-lg">No tasks in progress!</p>
                 </div>
               ) : (
-               <div className="space-y-4 mb-6">
+              <div className="space-y-4 mb-6">
   {pendingTasks.map(task => (
     <div key={task.id} className="bg-white rounded-xl shadow-md p-6 border-l-4 border-yellow-500">
-      {/* Buttons at TOP LEFT */}
+      {/* Buttons at TOP */}
       <div className="flex gap-2 mb-4 flex-wrap">
         {!task.acknowledged && (
           <button
@@ -1009,51 +1009,31 @@ await addDoc(collection(db, 'users'), {
         </button>
       </div>
 
-      {/* CONTENT BELOW */}
+      {/* Content BELOW buttons */}
       <div className="flex-1">
         <div className="flex items-center gap-3 mb-2">
           <h3 className="text-lg font-bold text-gray-900">{task.title}</h3>
-          <span className="text-sm text-gray-500">
-            from {task.clientName}
-            {task.clientCompany && ` (${task.clientCompany})`}
-          </span>
+          <span className="text-sm text-gray-500">from {task.clientName}{task.clientCompany && ` (${task.clientCompany})`}</span>
         </div>
         <p className="text-gray-600 mb-3">{task.description}</p>
         
         {task.images && task.images.length > 0 && (
           <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mb-3">
             {task.images.map((img, index) => (
-              <img
-                key={index}
-                src={img.url}
-                alt={img.name}
-                className="w-full h-24 object-cover rounded-lg border border-gray-300 cursor-pointer hover:opacity-75 transition"
-                onClick={() => window.open(img.url, '_blank')}
-              />
+              <img key={index} src={img.url} alt={img.name} className="w-full h-24 object-cover rounded-lg border border-gray-300 cursor-pointer hover:opacity-75 transition" onClick={() => window.open(img.url, '_blank')} />
             ))}
           </div>
         )}
         {task.videos && task.videos.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-3">
             {task.videos.map((vid, index) => (
-              <video
-                key={index}
-                src={vid.url}
-                className="w-full h-40 object-cover rounded-lg border border-gray-300"
-                controls
-              />
+              <video key={index} src={vid.url} className="w-full h-40 object-cover rounded-lg border border-gray-300" controls />
             ))}
           </div>
         )}
         <div className="flex items-center gap-4 text-sm text-gray-500">
-          <span className="flex items-center gap-1">
-            <Clock size={16} />
-            Submitted {getTimeSince(task.createdAt)}
-          </span>
-          <span className="flex items-center gap-1">
-            <Bell size={16} />
-            Last reminder {getTimeSince(task.lastReminder)}
-          </span>
+          <span className="flex items-center gap-1"><Clock size={16} />Submitted {getTimeSince(task.createdAt)}</span>
+          <span className="flex items-center gap-1"><Bell size={16} />Last reminder {getTimeSince(task.lastReminder)}</span>
         </div>
       </div>
     </div>
@@ -1194,6 +1174,7 @@ await addDoc(collection(db, 'users'), {
     </div>
   );
 }
+
 
 
 
