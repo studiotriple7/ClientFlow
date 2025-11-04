@@ -346,6 +346,20 @@ export default function ClientUpdateApp() {
     }
   };
 
+  const acknowledgeTask = async (taskId) => {
+  try {
+    const taskRef = doc(db, 'tasks', taskId);
+    await updateDoc(taskRef, { 
+      acknowledged: true,
+      acknowledgedAt: Timestamp.now()
+    });
+    const task = tasks.find(t => t.id === taskId);
+    addNotification(`You acknowledged "${task.title}" from ${task.clientName}`);
+  } catch (error) {
+    alert('Error: ' + error.message);
+  }
+};
+
   const approveTask = async (taskId) => {
     try {
       const taskRef = doc(db, 'tasks', taskId);
@@ -1114,6 +1128,7 @@ export default function ClientUpdateApp() {
     </div>
   );
 }
+
 
 
 
