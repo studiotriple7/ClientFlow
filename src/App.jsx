@@ -517,7 +517,7 @@ await addDoc(collection(db, 'users'), {
   }
 
   return (
-   <header className="bg-white shadow-sm border-b">
+ <header className="bg-white shadow-sm border-b">
   <div className="max-w-7xl mx-auto px-4 py-4">
     {/* Top row */}
     <div className="flex justify-between items-center mb-3">
@@ -608,48 +608,49 @@ await addDoc(collection(db, 'users'), {
             </div>
           )}
         </button>
-        {showProfileEdit && (
-          <div className="absolute right-4 top-16 bg-white rounded-lg shadow-xl border border-gray-200 p-4 z-50 w-64">
-            <div className="text-center mb-4">
-              <label className="cursor-pointer">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleProfilePicUpload}
-                  className="hidden"
-                />
-                <div className="flex flex-col items-center gap-2">
-                  {profilePicUploading ? (
-                    <Loader className="animate-spin text-indigo-600" size={40} />
-                  ) : currentUser.photoURL ? (
-                    <img 
-                      src={currentUser.photoURL} 
-                      alt="Profile" 
-                      className="w-20 h-20 rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-20 h-20 rounded-full bg-indigo-600 flex items-center justify-center">
-                      <User className="text-white" size={40} />
-                    </div>
-                  )}
-                  <span className="text-sm text-indigo-600 flex items-center gap-1">
-                    <Camera size={16} />
-                    Change Photo
-                  </span>
-                </div>
-              </label>
-            </div>
-            <div className="text-sm text-gray-600 border-t pt-2">
-              <p className="font-semibold">{currentUser.name}</p>
-              <p>{currentUser.email}</p>
-              {currentUser.companyName && <p className="text-xs mt-1">{currentUser.companyName}</p>}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   </div>
 </header>
+
+{showProfileEdit && (
+  <div className="absolute right-4 top-24 bg-white rounded-lg shadow-xl border border-gray-200 p-4 z-50 w-64">
+    <div className="text-center mb-4">
+      <label className="cursor-pointer">
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleProfilePicUpload}
+          className="hidden"
+        />
+        <div className="flex flex-col items-center gap-2">
+          {profilePicUploading ? (
+            <Loader className="animate-spin text-indigo-600" size={40} />
+          ) : currentUser.photoURL ? (
+            <img 
+              src={currentUser.photoURL} 
+              alt="Profile" 
+              className="w-20 h-20 rounded-full object-cover"
+            />
+          ) : (
+            <div className="w-20 h-20 rounded-full bg-indigo-600 flex items-center justify-center">
+              <User className="text-white" size={40} />
+            </div>
+          )}
+          <span className="text-sm text-indigo-600 flex items-center gap-1">
+            <Camera size={16} />
+            Change Photo
+          </span>
+        </div>
+      </label>
+    </div>
+    <div className="text-sm text-gray-600 border-t pt-2">
+      <p className="font-semibold">{currentUser.name}</p>
+      <p>{currentUser.email}</p>
+      {currentUser.companyName && <p className="text-xs mt-1">{currentUser.companyName}</p>}
+    </div>
+  </div>
+)}
       <div className="max-w-7xl mx-auto px-4 py-8">
         {currentUser.type === 'client' && (
           <div>
@@ -1196,6 +1197,7 @@ await addDoc(collection(db, 'users'), {
     </div>
   );
 }
+
 
 
 
