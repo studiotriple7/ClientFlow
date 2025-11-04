@@ -166,22 +166,33 @@ export default function ClientUpdateApp() {
 }, [tasks, currentUser]);
 
   const handleAuth = async () => {
-    try {
-      if (isSignup) {
-        if (!formData.name || !formData.email || !formData.password) {
-          alert('Please fill in all fields');
-          return;
-        }
-        const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
-        await updateProfile(userCredential.user, { displayName: formData.name });
-        
-        await setDoc(doc(db, 'users', userCredential.user.uid), {
-          email: formData.email,
-          name: formData.name,
-          companyName: formData.companyName || '',
-          type: 'client',
-          createdAt: Timestamp.now()
-        });
+  try {
+    if (isSignup) {
+      if (!formData.name || !formData.email || !formData.password) {
+        alert('Please fill in all fields');
+        return;
+      }
+      const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+      
+      // Add user to Firestore
+      await addDoc(collection(db, 'users'), {
+        uid: userCredential.user.uid,
+        email: formData.email,
+        name: formData.name,
+        type: 'client',
+        createdAt: Timestamp.now()
+      });
+      
+      addNotification(`Welcome ${formData.name}! Your account has been created.`);
+    } else {
+      await signInWithEmailAndPassword(auth, formData.email, formData.password);
+      addNotification(`Welcome back!`);
+    }
+    setFormData({ email: '', password: '', name: '' });
+  } catch (error) {
+    alert(error.message);
+  }
+};
 
         addNotification(`Welcome ${formData.name}! Your account has been created.`);
       } else {
@@ -1143,6 +1154,7 @@ export default function ClientUpdateApp() {
     </div>
   );
 }
+
 
 
 
