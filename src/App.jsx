@@ -1,4 +1,3 @@
-import { updateProfile } from 'firebase/auth';
 import React, { useState, useEffect } from 'react';
 import { Bell, CheckCircle, Clock, User, Plus, LogOut, X, AlertCircle, Loader, Camera, Upload } from 'lucide-react';
 import { auth, db, storage } from './firebase';
@@ -1176,6 +1175,7 @@ await addDoc(collection(db, 'users'), {
     </div>
   );
 }
+
 
 
 
