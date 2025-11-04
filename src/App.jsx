@@ -949,20 +949,29 @@ export default function ClientUpdateApp() {
                           </div>
                         </div>
                         <div className="flex gap-2">
-                          <button
-                            onClick={() => submitForReview(task.id)}
-                            className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition flex items-center gap-2 whitespace-nowrap"
-                          >
-                            <CheckCircle size={18} />
-                            Submit for Review
-                          </button>
-                          <button
-                            onClick={() => deleteTask(task.id)}
-                            className="bg-red-100 text-red-600 px-3 py-2 rounded-lg hover:bg-red-200 transition"
-                          >
-                            <X size={18} />
-                          </button>
-                        </div>
+  {!task.acknowledged && (
+    <button
+      onClick={() => acknowledgeTask(task.id)}
+      className="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition flex items-center gap-2 whitespace-nowrap"
+    >
+      <CheckCircle size={18} />
+      Mark as Read
+    </button>
+  )}
+  <button
+    onClick={() => submitForReview(task.id)}
+    className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition flex items-center gap-2 whitespace-nowrap"
+  >
+    <CheckCircle size={18} />
+    Submit for Review
+  </button>
+  <button
+    onClick={() => deleteTask(task.id)}
+    className="bg-red-100 text-red-600 px-3 py-2 rounded-lg hover:bg-red-200 transition"
+  >
+    <X size={18} />
+  </button>
+</div>
                       </div>
                     </div>
                   ))}
@@ -1105,6 +1114,7 @@ export default function ClientUpdateApp() {
     </div>
   );
 }
+
 
 
 
