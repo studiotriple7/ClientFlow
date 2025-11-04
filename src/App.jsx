@@ -542,6 +542,47 @@ await addDoc(collection(db, 'users'), {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
           </svg>
         </button>
+        {notifications.length > 0 && (
+          <div className="relative notification-container">
+            <button
+              onClick={() => setShowNotifications(!showNotifications)}
+              className="relative hover:bg-gray-100 p-2 rounded-lg transition"
+            >
+              <Bell className="text-indigo-600" size={20} />
+              <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                {notifications.length}
+              </span>
+            </button>
+            {showNotifications && (
+              <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
+                <div className="p-4 border-b border-gray-200 flex justify-between items-center">
+                  <h3 className="font-semibold text-gray-900">Notifications</h3>
+                  <button
+                    onClick={clearAllNotifications}
+                    className="text-xs text-indigo-600 hover:text-indigo-700 font-medium"
+                  >
+                    Clear all
+                  </button>
+                </div>
+                <div className="max-h-96 overflow-y-auto">
+                  {notifications.map(notif => (
+                    <div key={notif.id} className="p-4 border-b border-gray-100 hover:bg-gray-50 transition">
+                      <p className="text-sm text-gray-900">{notif.message}</p>
+                      <p className="text-xs text-gray-500 mt-1">{getTimeSince(notif.time)}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+        <button
+          onClick={handleLogout}
+          className="text-gray-600 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100 transition"
+          title="Logout"
+        >
+          <LogOut size={20} />
+        </button>
       </div>
     </div>
     
@@ -567,101 +608,48 @@ await addDoc(collection(db, 'users'), {
             </div>
           )}
         </button>
+        {showProfileEdit && (
+          <div className="absolute right-4 top-16 bg-white rounded-lg shadow-xl border border-gray-200 p-4 z-50 w-64">
+            <div className="text-center mb-4">
+              <label className="cursor-pointer">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleProfilePicUpload}
+                  className="hidden"
+                />
+                <div className="flex flex-col items-center gap-2">
+                  {profilePicUploading ? (
+                    <Loader className="animate-spin text-indigo-600" size={40} />
+                  ) : currentUser.photoURL ? (
+                    <img 
+                      src={currentUser.photoURL} 
+                      alt="Profile" 
+                      className="w-20 h-20 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-20 h-20 rounded-full bg-indigo-600 flex items-center justify-center">
+                      <User className="text-white" size={40} />
+                    </div>
+                  )}
+                  <span className="text-sm text-indigo-600 flex items-center gap-1">
+                    <Camera size={16} />
+                    Change Photo
+                  </span>
+                </div>
+              </label>
+            </div>
+            <div className="text-sm text-gray-600 border-t pt-2">
+              <p className="font-semibold">{currentUser.name}</p>
+              <p>{currentUser.email}</p>
+              {currentUser.companyName && <p className="text-xs mt-1">{currentUser.companyName}</p>}
+            </div>
+          </div>
+        )}
       </div>
     </div>
-
-            {showProfileEdit && (
-              <div className="absolute right-4 top-16 bg-white rounded-lg shadow-xl border border-gray-200 p-4 z-50 w-64">
-                <div className="text-center mb-4">
-                  <label className="cursor-pointer">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleProfilePicUpload}
-                      className="hidden"
-                    />
-                    <div className="flex flex-col items-center gap-2">
-                      {profilePicUploading ? (
-                        <Loader className="animate-spin text-indigo-600" size={40} />
-                      ) : currentUser.photoURL ? (
-                        <img 
-                          src={currentUser.photoURL} 
-                          alt="Profile" 
-                          className="w-20 h-20 rounded-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-20 h-20 rounded-full bg-indigo-600 flex items-center justify-center">
-                          <User className="text-white" size={40} />
-                        </div>
-                      )}
-                      <span className="text-sm text-indigo-600 flex items-center gap-1">
-                        <Camera size={16} />
-                        Change Photo
-                      </span>
-                    </div>
-                  </label>
-                </div>
-                <div className="text-sm text-gray-600 border-t pt-2">
-                  <p className="font-semibold">{currentUser.name}</p>
-                  <p>{currentUser.email}</p>
-                  {currentUser.companyName && <p className="text-xs mt-1">{currentUser.companyName}</p>}
-                </div>
-              </div>
-            )}
-
-            {notifications.length > 0 && (
-              <div className="relative notification-container">
-                <button
-                  onClick={() => setShowNotifications(!showNotifications)}
-                  className="relative hover:bg-gray-100 p-2 rounded-lg transition"
-                >
-                  <Bell className="text-indigo-600" size={24} />
-                  <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                    {notifications.length}
-                  </span>
-                </button>
-                
-                {showNotifications && (
-                  <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
-                    <div className="p-4 border-b border-gray-200 flex justify-between items-center">
-                      <h3 className="font-semibold text-gray-900">Notifications</h3>
-                      <button
-                        onClick={clearAllNotifications}
-                        className="text-xs text-indigo-600 hover:text-indigo-700 font-medium"
-                      >
-                        Clear all
-                      </button>
-                    </div>
-                    <div className="max-h-96 overflow-y-auto">
-                      {notifications
-  .filter(notif => {
-    // Admins see all notifications
-    if (currentUser.type === 'admin') return true;
-    // Clients only see notifications about their own tasks
-    return notif.userId === currentUser.id;
-  })
-  .map(notif => (
-    <div key={notif.id} className="p-4 border-b border-gray-200 hover:bg-gray-50 transition">
-      <p className="text-sm text-gray-900">{notif.message}</p>
-      <p className="text-xs text-gray-500 mt-1">{getTimeSince(notif.time)}</p>
-    </div>
-  ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition"
-            >
-              <LogOut size={18} />
-              Logout
-            </button>
-          </div>
-        </div>
-      </header>
-
+  </div>
+</header>
       <div className="max-w-7xl mx-auto px-4 py-8">
         {currentUser.type === 'client' && (
           <div>
@@ -1208,6 +1196,7 @@ await addDoc(collection(db, 'users'), {
     </div>
   );
 }
+
 
 
 
