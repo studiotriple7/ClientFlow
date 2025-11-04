@@ -176,10 +176,15 @@ export default function ClientUpdateApp() {
         alert('Please fill in all fields');
         return;
       }
-      const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
-      
-      // Add user to Firestore
-     await addDoc(collection(db, 'users'), {
+     const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+
+// Set display name in Firebase Auth
+await updateProfile(userCredential.user, {
+  displayName: formData.name
+});
+
+// Add user to Firestore
+await addDoc(collection(db, 'users'), {
   uid: userCredential.user.uid,
   email: formData.email,
   name: formData.name,
@@ -1170,6 +1175,7 @@ export default function ClientUpdateApp() {
     </div>
   );
 }
+
 
 
 
