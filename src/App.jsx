@@ -40,6 +40,7 @@ export default function ClientUpdateApp() {
   const [showProfileEdit, setShowProfileEdit] = useState(false);
   const [profilePicUploading, setProfilePicUploading] = useState(false);
   const [clientCount, setClientCount] = useState(0);
+  const [showClientsList, setShowClientsList] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -1165,6 +1166,7 @@ export default function ClientUpdateApp() {
     </div>
   );
 }
+
 
 
 
