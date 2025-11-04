@@ -906,15 +906,37 @@ export default function ClientUpdateApp() {
                 </div>
                 <p className="text-3xl font-bold text-gray-900">{completedTasks.length}</p>
               </div>
-              <div className="bg-white rounded-xl shadow-md p-6">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="bg-purple-100 p-2 rounded-lg">
-                    <User className="text-purple-600" size={24} />
-                  </div>
-                  <h3 className="font-semibold text-gray-700">Total Clients</h3>
-                </div>
-                <p className="text-3xl font-bold text-gray-900">{clientCount}</p>
-              </div>
+              <div className="bg-white rounded-xl shadow-md p-6 relative">
+  <button
+    onClick={() => setShowClientsList(!showClientsList)}
+    className="w-full text-left hover:bg-gray-50 rounded-lg p-2 transition"
+  >
+    <div className="flex items-center gap-3 mb-2">
+      <div className="bg-purple-100 p-2 rounded-lg">
+        <User className="text-purple-600" size={24} />
+      </div>
+      <h3 className="font-semibold text-gray-700">Total Clients</h3>
+    </div>
+    <p className="text-3xl font-bold text-gray-900">{clientCount}</p>
+  </button>
+  
+  {showClientsList && (
+    <div className="absolute top-16 left-0 bg-white border border-gray-300 rounded-lg shadow-lg p-4 w-64 z-50">
+      <h4 className="font-semibold text-gray-900 mb-3">Registered Clients</h4>
+      {users && users.length > 0 ? (
+        <div className="space-y-2">
+          {users.map((user, index) => (
+            <div key={index} className="p-2 bg-gray-50 rounded-lg text-sm text-gray-700">
+              {user.name || user.email}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-gray-500 text-sm">No clients yet</p>
+      )}
+    </div>
+  )}
+</div>
             </div>
 
             <div>
@@ -1143,6 +1165,7 @@ export default function ClientUpdateApp() {
     </div>
   );
 }
+
 
 
 
