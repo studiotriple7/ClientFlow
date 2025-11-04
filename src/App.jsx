@@ -1032,7 +1032,7 @@ await addDoc(collection(db, 'users'), {
                             </span>
                           </div>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 mb-4">
   {!task.acknowledged && (
     <button
       onClick={() => acknowledgeTask(task.id)}
@@ -1198,6 +1198,7 @@ await addDoc(collection(db, 'users'), {
     </div>
   );
 }
+
 
 
 
