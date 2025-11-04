@@ -537,9 +537,6 @@ await addDoc(collection(db, 'users'), {
    <div className="flex items-center gap-4">
   <div className="flex items-center gap-3">
     <div>
-      <p className="text-sm font-semibold text-gray-900">
-        Hi {currentUser.name?.split(' ')[0]}! 👋
-      </p>
       <p className="text-xs text-gray-500">{currentUser.type === 'admin' ? 'Admin' : 'Client'}</p>
     </div>
     <button
@@ -1198,6 +1195,7 @@ await addDoc(collection(db, 'users'), {
     </div>
   );
 }
+
 
 
 
